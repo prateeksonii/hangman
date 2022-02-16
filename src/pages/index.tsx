@@ -11,12 +11,18 @@ type Key = { key: string; correct: boolean; pressed: boolean }
 export default function Home() {
   const [distortedName, setDistortedName] = useState('')
   const [keys, setKeys] = useState<Key[]>([])
+  const [tries, setTries] = useState(0)
 
   const [gameState, setGameState] = useState<GameState>('new')
 
   const updateKeys = (key: string) => {
     if (!/^[\w]{1}$/.test(key)) {
       return console.error('invalid key')
+    }
+
+    if (!movie.includes(key)) {
+      console.log('here', key)
+      setTries((tries) => tries + 1)
     }
 
     setKeys((keys) => {
@@ -27,8 +33,11 @@ export default function Home() {
       if (updatedKeyIndex === -1) return keys
 
       newKeys[updatedKeyIndex].pressed = true
+      newKeys[updatedKeyIndex].correct = movie.includes(key)
+
       return newKeys
     })
+
     setDistortedName((name) => {
       let newName = name.split('')
       for (let index = 0; index < movie.length; index++) {
@@ -40,6 +49,13 @@ export default function Home() {
       return newName.join('')
     })
   }
+
+  useEffect(() => {
+    console.log(tries)
+    if (tries > 3) {
+      setGameState('lose')
+    }
+  }, [tries])
 
   useEffect(() => {
     const eventHandler = (event: Event) => {
@@ -120,27 +136,38 @@ export default function Home() {
               key={key.key}
               className="rounded-lg p-4 shadow-md shadow-slate-400"
               style={{
-                backgroundColor: key.pressed ? 'rgb(74 222 128)' : 'inherit',
+                backgroundColor: key.pressed
+                  ? key.correct
+                    ? 'rgb(74 222 128)'
+                    : 'rgb(248 113 113)'
+                  : 'inherit',
                 color: key.pressed ? 'white' : 'inherit',
               }}
               onClick={() => onClickKey(key)}
+              disabled={
+                keys.find((keyState) => keyState.key === key.key)?.pressed
+              }
             >
               {key.key.toUpperCase()}
             </button>
           ))}
         </section>
 
-        {gameState === 'win' && (
+        {gameState === 'win' ? (
           <div className="space-y-4">
             <h2 className="mt-8 text-xl text-green-400">You won!</h2>
-            <button
-              className="rounded bg-red-500 p-2 text-white"
-              onClick={handleReset}
-            >
-              Restart
-            </button>
           </div>
-        )}
+        ) : gameState === 'lose' ? (
+          <div className="space-y-4">
+            <h2 className="mt-8 text-xl text-red-400">You lose!</h2>
+          </div>
+        ) : null}
+        <button
+          className="mt-12 rounded bg-red-500 p-2 text-white"
+          onClick={handleReset}
+        >
+          Restart
+        </button>
       </main>
     </>
   )
