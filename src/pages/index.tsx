@@ -6,41 +6,45 @@ const movie = 'mission impossible'
 
 type GameState = 'new' | 'win' | 'lose'
 
+type Key = { key: string; correct: boolean; pressed: boolean }
+
 export default function Home() {
   const [distortedName, setDistortedName] = useState('')
-  const [keys, setKeys] = useState<
-    { key: string; correct: boolean; pressed: boolean }[]
-  >([])
+  const [keys, setKeys] = useState<Key[]>([])
 
   const [gameState, setGameState] = useState<GameState>('new')
+
+  const updateKeys = (key: string) => {
+    if (!/^[\w]{1}$/.test(key)) {
+      return console.error('invalid key')
+    }
+
+    setKeys((keys) => {
+      const newKeys = [...keys]
+      const updatedKeyIndex = newKeys.findIndex(
+        (keyState) => keyState.key === key
+      )
+      if (updatedKeyIndex === -1) return keys
+
+      newKeys[updatedKeyIndex].pressed = true
+      return newKeys
+    })
+    setDistortedName((name) => {
+      let newName = name.split('')
+      for (let index = 0; index < movie.length; index++) {
+        if (movie[index] === key) {
+          newName[index] = key
+        }
+      }
+
+      return newName.join('')
+    })
+  }
 
   useEffect(() => {
     const eventHandler = (event: Event) => {
       const key = keycode(event)
-      if (!/^[\w]{1}$/.test(key)) {
-        return console.error('invalid key')
-      }
-
-      setKeys((keys) => {
-        const newKeys = [...keys]
-        const updatedKeyIndex = newKeys.findIndex(
-          (keyState) => keyState.key === key
-        )
-        if (updatedKeyIndex === -1) return keys
-
-        newKeys[updatedKeyIndex].pressed = true
-        return newKeys
-      })
-      setDistortedName((name) => {
-        let newName = name.split('')
-        for (let index = 0; index < movie.length; index++) {
-          if (movie[index] === key) {
-            newName[index] = key
-          }
-        }
-
-        return newName.join('')
-      })
+      updateKeys(key)
     }
 
     document.addEventListener('keydown', eventHandler, false)
@@ -89,6 +93,10 @@ export default function Home() {
     setGameState('new')
   }
 
+  const onClickKey = (key: Key) => {
+    updateKeys(key.key)
+  }
+
   return (
     <>
       <Head>
@@ -115,6 +123,7 @@ export default function Home() {
                 backgroundColor: key.pressed ? 'rgb(74 222 128)' : 'inherit',
                 color: key.pressed ? 'white' : 'inherit',
               }}
+              onClick={() => onClickKey(key)}
             >
               {key.key.toUpperCase()}
             </button>
