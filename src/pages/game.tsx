@@ -40,7 +40,7 @@ const GamePage: NextPage = () => {
         <title>Hangman</title>
       </Head>
       <main
-        className={`mx-auto h-screen w-screen p-4 text-center ${setBackground()}`}
+        className={`mx-auto flex h-screen w-screen flex-col items-center justify-center p-4 text-center ${setBackground()}`}
       >
         <h1 className="text-4xl">HANGMAN</h1>
         <p className="font-head text-xl">Let's check your knowledge!</p>
