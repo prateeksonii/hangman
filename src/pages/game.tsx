@@ -39,19 +39,21 @@ const GamePage: NextPage = () => {
       <Head>
         <title>Hangman</title>
       </Head>
-      <main className={`h-screen w-screen p-4 text-center ${setBackground()}`}>
+      <main
+        className={`mx-auto h-screen w-screen p-4 text-center ${setBackground()}`}
+      >
         <h1 className="text-4xl">HANGMAN</h1>
         <p className="font-head text-xl">Let's check your knowledge!</p>
 
         <section
-          className="mt-8 text-7xl uppercase leading-relaxed"
+          className="mt-8 p-4 text-4xl uppercase leading-relaxed md:text-7xl"
           style={{ color: gameState === 'win' ? 'green' : 'inherit' }}
         >
           {distortedName}
         </section>
 
         {/* Keyboard  */}
-        <section className="container mx-auto flex flex-wrap gap-4 text-2xl">
+        <section className="container mx-auto flex flex-wrap items-center justify-evenly gap-4 p-4 text-xl md:justify-center md:text-2xl">
           {keys.map((key) => (
             <button
               key={key.key}
@@ -84,7 +86,7 @@ const GamePage: NextPage = () => {
           </div>
         ) : null}
         <button
-          className="mt-12 rounded bg-red-500 p-2 text-white"
+          className="my-12 rounded bg-red-500 p-2 text-white"
           onClick={handleReset}
         >
           Restart

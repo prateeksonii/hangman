@@ -2,7 +2,7 @@ export const movies = [
   'mission impossible',
   '8 mile',
   'Shawshank redemption',
-  'Insidius',
+  'Insidious',
   'Die hard',
   'Shutter island',
 ]
