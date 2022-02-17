@@ -1,6 +1,9 @@
 import keycode from 'keycode'
 import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 import { GameState, Key } from '../types'
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default (movie: string) => {
   const [distortedName, setDistortedName] = useState('')
@@ -8,6 +11,10 @@ export default (movie: string) => {
   const [tries, setTries] = useState(0)
 
   const [gameState, setGameState] = useState<GameState>('new')
+
+  // const { data } = useSWR('/api/movies', fetcher)
+
+  // console.log(data)
 
   const updateKeys = (key: string) => {
     if (!/^[\w]{1}$/.test(key)) {
