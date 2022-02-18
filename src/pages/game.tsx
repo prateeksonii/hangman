@@ -8,16 +8,27 @@ import useGameState from '../hooks/useGameState'
 
 const GamePage: NextPage = () => {
   const router = useRouter()
-  const [movie] = useAtom(movieAtom)
+
+  const {
+    distortedName,
+    gameState,
+    keys,
+    onClickKey,
+    tries,
+    error,
+    handleReset,
+    movie,
+  } = useGameState()
+
+  if (error) {
+    return <div>Error fetching data</div>
+  }
 
   useEffect(() => {
     if (!movie || movie.length === 0) {
       router.replace('/')
     }
   }, [movie])
-
-  const { distortedName, gameState, handleReset, keys, onClickKey, tries } =
-    useGameState(movie)
 
   const setBackground = (): string => {
     switch (tries) {

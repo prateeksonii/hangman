@@ -1,27 +1,23 @@
 import keycode from 'keycode'
 import { useEffect, useState } from 'react'
-import useSWR from 'swr'
 import { GameState, Key } from '../types'
+import useMovie from './useMovie'
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
-
-export default (movie: string) => {
+export default () => {
   const [distortedName, setDistortedName] = useState('')
   const [keys, setKeys] = useState<Key[]>([])
   const [tries, setTries] = useState(0)
 
   const [gameState, setGameState] = useState<GameState>('new')
 
-  // const { data } = useSWR('/api/movies', fetcher)
-
-  // console.log(data)
+  const { error, movie, refetchMovie } = useMovie()
 
   const updateKeys = (key: string) => {
     if (!/^[\w]{1}$/.test(key)) {
       return console.error('invalid key')
     }
 
-    if (!movie.includes(key)) {
+    if (!movie.includes('' + key)) {
       console.log('here', key)
       setTries((tries) => tries + 1)
     }
@@ -104,9 +100,10 @@ export default (movie: string) => {
           })),
       ])
     }
-  }, [gameState])
+  }, [gameState, movie])
 
   const handleReset = () => {
+    refetchMovie()
     setGameState('new')
   }
 
@@ -114,5 +111,14 @@ export default (movie: string) => {
     updateKeys(key.key)
   }
 
-  return { gameState, distortedName, keys, onClickKey, handleReset, tries }
+  return {
+    gameState,
+    distortedName,
+    keys,
+    onClickKey,
+    handleReset,
+    tries,
+    error,
+    movie,
+  }
 }
